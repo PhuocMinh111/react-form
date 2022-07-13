@@ -18,16 +18,28 @@ class Form extends Component {
   };
   handleChange = (e) => {
     const { name, value } = e.target;
-    this.setState({
-      ...this.state.value,
-      [name]: value,
-    });
+    this.setState((state) => ({
+      ...this.state,
+      value: {
+        ...this.state.value,
+        [name]: value,
+      },
+    }));
     return e.target.value;
   };
 
   handleSub = (e) => {
     e.preventDefault();
     console.log(this.state.value);
+    this.props.dispatch({
+      type: "CHECK_MASV",
+      payload: {
+        value: this.state.value,
+        list: this.props.formReducer.sv || [],
+      },
+    });
+    console.log(this.props.validReducer);
+
     this.props.dispatch({ type: "ADD", payload: this.state.value });
 
     // const name = e.target.name;
@@ -59,8 +71,7 @@ class Form extends Component {
     // const {}
   };
   render() {
-    const { error } = this.state;
-
+    const { errMaSV } = this.props.validReducer;
     return (
       <div className="card p-0">
         <div className="card-header bg-dark text-white font-weight-bold">
@@ -76,10 +87,13 @@ class Form extends Component {
                     required
                     name="maSV"
                     onBlur={this.handleBlur}
-                    onChange={(e) => this.handleChange(e)}
+                    onChange={this.handleChange}
                     type="text"
                     className="form-control"
                   />
+                  {errMaSV.state && (
+                    <span className="text-danger">{errMaSV.msg}</span>
+                  )}
                 </div>
               </div>
               <div className="col-6 mb-3">
@@ -89,15 +103,15 @@ class Form extends Component {
                     required
                     minLength={4}
                     maxLength={12}
-                    onChange={(e) => this.handleChange(e)}
+                    onChange={this.handleChange}
                     name="tenSV"
                     onBlur={this.handleBlur}
                     type="text"
                     className="form-control"
                   />
-                  {error.userName && (
+                  {/* {error.userName && (
                     <span className="text-danger">{error.userName}</span>
-                  )}
+                  )} */}
                 </div>
               </div>
               <div className="col-6 mb-3">
@@ -122,7 +136,7 @@ class Form extends Component {
                     // required
                     // pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+[.]{1}[a-zA-Z]{2,}$"
                     onBlur={this.handleBlur}
-                    onChange={(e) => this.handleChange(e)}
+                    onChange={this.handleChange}
                     name="email"
                     type="text"
                     className="form-control"
@@ -142,8 +156,8 @@ class Form extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => ({ ...state });
 
-const mapDispatchToProps = (dispatch) => ({ dispatch });
+// const mapDispatchToProps = () => {};
 
-export default connect(mapStateToProps, mapDispatchToProps)(Form);
+export default connect(mapStateToProps, null)(Form);

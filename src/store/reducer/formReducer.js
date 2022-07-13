@@ -1,6 +1,5 @@
 const DEFAULT = {
   sv: [],
-
   err: {
     userName: "",
     fullName: "",
@@ -13,9 +12,10 @@ const DEFAULT = {
 export const formReducer = (state = DEFAULT, { type, payload }) => {
   switch (type) {
     case "ADD":
-      const temp = [...state.sv];
-      temp.push(payload);
-      return { ...state, sv: [...temp] };
+      let data = [...state.sv];
+      console.log(data);
+      data.push(payload);
+      return { ...state, sv: [...data] };
     default:
       return state;
   }

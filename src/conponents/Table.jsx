@@ -7,9 +7,9 @@ export class Table extends Component {
     this.state = {};
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.state !== nextState || this.props !== nextProps ? true : false;
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return this.state !== nextState || this.props !== nextProps ? true : false;
+  // }
   render() {
     console.log(this.props.sv);
     return (
@@ -49,23 +49,23 @@ export class Table extends Component {
             </thead>
 
             <tbody>
-              {/* {this.props.userList.map((user) => {
-                const { id, userName, fullName, email, phone, type } = user;
+              {this.props.sv.map((user) => {
+                const { maSV, tenSV, email, soDT } = user;
                 return (
                   <tr className="bg-light">
-                    <td>{id}</td>
-                    <td>{userName}</td>
-                    <td>{fullName}</td>
+                    <td>{maSV}</td>
+                    <td>{tenSV}</td>
                     <td>{email}</td>
-                    <td>{phone}</td>
-                    <td>{type}</td>
+                    <td>{soDT}</td>
                     <td>
-                      <button className="btn btn-info mr-2">EDIT</button>
+                      <button className="btn btn-info mr-2 d-inline-block">
+                        EDIT
+                      </button>
                       <button className="btn btn-danger">DELETE</button>
                     </td>
                   </tr>
                 );
-              })} */}
+              })}
             </tbody>
           </table>
         </div>
