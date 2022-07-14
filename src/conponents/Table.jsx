@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 export class Table extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
   }
 
   // shouldComponentUpdate(nextProps, nextState) {
