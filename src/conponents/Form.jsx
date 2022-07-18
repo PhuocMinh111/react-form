@@ -35,9 +35,10 @@ class Form extends Component {
       type: "CHECK_MASV",
       payload: {
         value: this.state.value,
-        list: this.props.formReducer.sv || [],
+        list: this.props.formReducer.sv,
       },
     });
+    console.log("hello");
     console.log(this.props.validReducer);
 
     this.props.dispatch({ type: "ADD", payload: this.state.value });
@@ -49,7 +50,6 @@ class Form extends Component {
   handleBlur = (e) => {
     const {
       name,
-      title,
       maxLength,
       minLength,
       validity: { valueMissing, patternMismatch, tooLong, tooShort },
@@ -84,7 +84,6 @@ class Form extends Component {
                 <div className="form-group">
                   <label>mã Sinh Viên</label>
                   <input
-                    required
                     name="maSV"
                     onBlur={this.handleBlur}
                     onChange={this.handleChange}
@@ -100,7 +99,6 @@ class Form extends Component {
                 <div className="form-group">
                   <label>Họ Tên </label>
                   <input
-                    required
                     minLength={4}
                     maxLength={12}
                     onChange={this.handleChange}
@@ -118,7 +116,6 @@ class Form extends Component {
                 <div className="form-group">
                   <label>Số Điên Thoại</label>
                   <input
-                    required
                     name="soDT"
                     minLength={4}
                     maxLength={12}

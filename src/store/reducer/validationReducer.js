@@ -13,11 +13,14 @@ export const validReducer = (
       const ma = value["maSV"];
       let temp = false;
       let message = "";
-      let index = -1;
+      console.log(ma.length);
+      if (ma.length < 1) {
+        temp = true;
+        message = "mã sinh viên không được để trống";
+      }
       for (let i = 0; i < list.length; i++) {
         if (!list[i]) return;
-        if (list[i].maSV == ma) {
-          index = i;
+        if (list[i].maSV === ma) {
           temp = true;
           message = "mã sinh viên tồn tại";
         }
