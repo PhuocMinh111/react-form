@@ -2,16 +2,10 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 
 export class Table extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
   // shouldComponentUpdate(nextProps, nextState) {
   //   return this.state !== nextState || this.props !== nextProps ? true : false;
   // }
   render() {
-    console.log(this.props.sv);
     return (
       <div className="card p-0 mt-3">
         <div className="card-header text-light bg-dark font-weight-bold">
@@ -58,7 +52,15 @@ export class Table extends Component {
                     <td>{email}</td>
                     <td>{soDT}</td>
                     <td>
-                      <button className="btn btn-info mr-2 d-inline-block">
+                      <button
+                        onClick={() =>
+                          this.props.dispatch({
+                            type: "EDIT",
+                            payload: user,
+                          })
+                        }
+                        className="btn btn-info mr-2 d-inline-block"
+                      >
                         EDIT
                       </button>
                       <button className="btn btn-danger">DELETE</button>
@@ -76,6 +78,6 @@ export class Table extends Component {
 
 const mapStateToProps = (state) => ({ ...state.formReducer });
 
-const mapDispatchToProps = {};
+// const mapDispatchToProps = {};
 
-export default connect(mapStateToProps, mapDispatchToProps)(Table);
+export default connect(mapStateToProps, null)(Table);

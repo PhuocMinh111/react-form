@@ -3,75 +3,86 @@ import { connect } from "react-redux";
 
 class Form extends Component {
   state = {
-    value: {
-      maSV: "",
-      tenSV: "",
-      soDT: "",
-      email: "",
-    },
-    error: {
-      maSV: "",
-      tenSV: "",
-      soDT: "",
-      email: "",
-    },
+    maSV: "",
+    tenSV: "",
+    soDT: "",
+    email: "",
   };
   handleChange = (e) => {
     const { name, value } = e.target;
     this.setState((state) => ({
       ...this.state,
-      value: {
-        ...this.state.value,
-        [name]: value,
-      },
+      [name]: value,
     }));
-    return e.target.value;
   };
 
   handleSub = (e) => {
+    let firstAdd = true;
     e.preventDefault();
-    console.log(this.state.value);
     this.props.dispatch({
       type: "CHECK_MASV",
       payload: {
-        value: this.state.value,
+        value: this.state,
         list: this.props.formReducer.sv,
       },
     });
-    console.log("hello");
+    this.props.dispatch({
+      type: "CHECK_TEN",
+      payload: {
+        value: this.state,
+        list: this.props.formReducer.sv || [],
+      },
+    });
+    this.props.dispatch({
+      type: "CHECK_DT",
+      payload: {
+        value: this.state,
+        list: this.props.formReducer.sv || [],
+      },
+    });
+    this.props.dispatch({
+      type: "CHECK_MAIL",
+      payload: {
+        value: this.state,
+        list: this.props.formReducer.sv || [],
+      },
+    });
+    const { error, errMaSV, errEmail, errTenSV, errSoDT } =
+      this.props.validReducer;
     console.log(this.props.validReducer);
+    for (const error in this.props.validReducer) {
+      const { msg } = this.props.validReducer[error];
+      console.log(msg);
+      if (msg) return;
+    }
 
-    this.props.dispatch({ type: "ADD", payload: this.state.value });
+    this.props.dispatch({ type: "ADD", payload: this.state });
+    this.setState({
+      maSV: "",
+      tenSV: "",
+      soDT: "",
+      email: "",
+    });
 
     // const name = e.target.name;
     // const value = e.target.value;
     // this.setState({ [name]: value });
   };
-  handleBlur = (e) => {
-    const {
-      name,
-      maxLength,
-      minLength,
-      validity: { valueMissing, patternMismatch, tooLong, tooShort },
-    } = e.target;
-    let msg = "";
-    if (valueMissing) {
-      msg += `${name} required`;
+  static getDerivedStateFromProps(nextProps, currentState) {
+    if (
+      nextProps.formReducer.selected &&
+      nextProps.formReducer.selected.maSV !== currentState.maSV
+    ) {
+      currentState = nextProps.formReducer.selected;
     }
-    if (tooShort || tooLong) {
-      msg += `from ${minLength} to ${maxLength} characters.`;
-    }
+    return currentState;
+  }
 
-    this.setState({
-      error: {
-        ...this.state.error,
-        [name]: msg,
-      },
-    });
-    // const {}
-  };
   render() {
-    const { errMaSV } = this.props.validReducer;
+    const { errMaSV, errTenSV, errEmail, errSoDT } = this.props.validReducer;
+    const { maSV, tenSV, soDT, email } = this.state;
+    console.log(this.state);
+
     return (
       <div className="card p-0">
         <div className="card-header bg-dark text-white font-weight-bold">
@@ -85,7 +96,8 @@ class Form extends Component {
                   <label>mã Sinh Viên</label>
                   <input
                     name="maSV"
-                    onBlur={this.handleBlur}
+                    // onBlur={this.handleBlur}
+                    value={maSV}
                     onChange={this.handleChange}
                     type="text"
                     className="form-control"
@@ -99,17 +111,16 @@ class Form extends Component {
                 <div className="form-group">
                   <label>Họ Tên </label>
                   <input
-                    minLength={4}
-                    maxLength={12}
                     onChange={this.handleChange}
                     name="tenSV"
-                    onBlur={this.handleBlur}
+                    // onBlur={this.handleBlur}
+                    value={tenSV}
                     type="text"
                     className="form-control"
                   />
-                  {/* {error.userName && (
-                    <span className="text-danger">{error.userName}</span>
-                  )} */}
+                  {errTenSV.state && (
+                    <span className="text-danger">{errTenSV.msg}</span>
+                  )}
                 </div>
               </div>
               <div className="col-6 mb-3">
@@ -117,13 +128,15 @@ class Form extends Component {
                   <label>Số Điên Thoại</label>
                   <input
                     name="soDT"
-                    minLength={4}
-                    maxLength={12}
-                    onBlur={this.handleBlur}
-                    onChange={(e) => this.handleChange(e)}
+                    // onBlur={this.handleBlur}
+                    value={soDT}
+                    onChange={this.handleChange}
                     type="text"
                     className="form-control"
                   />
+                  {errSoDT.state && (
+                    <span className="text-danger">{errSoDT.msg}</span>
+                  )}
                 </div>
               </div>
               <div className="col-6 mb-3">
@@ -132,12 +145,16 @@ class Form extends Component {
                   <input
                     // required
                     // pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+[.]{1}[a-zA-Z]{2,}$"
-                    onBlur={this.handleBlur}
+                    // onBlur={this.handleBlur}
+                    value={email}
                     onChange={this.handleChange}
                     name="email"
                     type="text"
                     className="form-control"
                   />
+                  {errEmail.state && (
+                    <span className="text-danger">{errEmail.msg}</span>
+                  )}
                 </div>
               </div>
             </div>

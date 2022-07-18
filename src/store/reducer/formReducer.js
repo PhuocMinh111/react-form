@@ -1,13 +1,6 @@
 const DEFAULT = {
   sv: [],
-  err: {
-    userName: "",
-    fullName: "",
-    email: "",
-    pass: "",
-    phone: "",
-    type: "",
-  },
+  selected: null,
 };
 export const formReducer = (state = DEFAULT, { type, payload }) => {
   switch (type) {
@@ -16,6 +9,8 @@ export const formReducer = (state = DEFAULT, { type, payload }) => {
       console.log(data);
       data.push(payload);
       return { ...state, sv: [...data] };
+    case "EDIT":
+      return { ...state, selected: { ...payload } };
     default:
       return state;
   }
