@@ -7,6 +7,7 @@ class Form extends Component {
     tenSV: "",
     soDT: "",
     email: "",
+    selected: false,
   };
   handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,53 +17,51 @@ class Form extends Component {
     }));
   };
 
-  handleSub = (e) => {
-    let firstAdd = true;
+  handleSub = async (e) => {
     e.preventDefault();
-    this.props.dispatch({
-      type: "CHECK_MASV",
-      payload: {
-        value: this.state,
-        list: this.props.formReducer.sv,
-      },
-    });
-    this.props.dispatch({
-      type: "CHECK_TEN",
-      payload: {
-        value: this.state,
-        list: this.props.formReducer.sv || [],
-      },
-    });
-    this.props.dispatch({
-      type: "CHECK_DT",
-      payload: {
-        value: this.state,
-        list: this.props.formReducer.sv || [],
-      },
-    });
-    this.props.dispatch({
-      type: "CHECK_MAIL",
-      payload: {
-        value: this.state,
-        list: this.props.formReducer.sv || [],
-      },
-    });
-    const { error, errMaSV, errEmail, errTenSV, errSoDT } =
-      this.props.validReducer;
-    console.log(this.props.validReducer);
-    for (const error in this.props.validReducer) {
-      const { msg } = this.props.validReducer[error];
-      console.log(msg);
-      if (msg) return;
+    if (!this.props.formReducer.selected) {
+      this.props.dispatch({
+        type: "VALIDATION",
+        payload: {
+          value: this.state,
+          list: this.props.formReducer.sv,
+          selected: this.props.formReducer.selected,
+        },
+      });
     }
 
-    this.props.dispatch({ type: "ADD", payload: this.state });
+    if (!this.props.validReducer) return;
+    const { errMaSV, errSoDT, errTenSV, errEmail } = this.props.validReducer;
+    let error = false;
+    error = await (errMaSV.state ||
+      errSoDT.state ||
+      errTenSV.state ||
+      errEmail.state);
+    console.log(error);
+    if (error) {
+      return;
+    }
+    this.props.dispatch({
+      type: "ADD",
+      payload: this.state,
+    });
+    if (this.props.formReducer.selected) {
+      this.props.dispatch({
+        type: "EDIT_USER",
+        payload: this.state,
+      });
+    }
     this.setState({
       maSV: "",
       tenSV: "",
       soDT: "",
       email: "",
     });
+    // console.log(this.props.validReducer);
+    // for (const error in this.props.validReducer) {
+    //   const { state } = this.props.validReducer[error];
+    //   if (state === true) return;
+    // }
 
     // const name = e.target.name;
     // const value = e.target.value;
@@ -73,7 +72,7 @@ class Form extends Component {
       nextProps.formReducer.selected &&
       nextProps.formReducer.selected.maSV !== currentState.maSV
     ) {
-      currentState = nextProps.formReducer.selected;
+      currentState = { ...nextProps.formReducer.selected, selected: true };
     }
     return currentState;
   }
@@ -81,7 +80,6 @@ class Form extends Component {
   render() {
     const { errMaSV, errTenSV, errEmail, errSoDT } = this.props.validReducer;
     const { maSV, tenSV, soDT, email } = this.state;
-    console.log(this.state);
 
     return (
       <div className="card p-0">
@@ -96,6 +94,7 @@ class Form extends Component {
                   <label>mã Sinh Viên</label>
                   <input
                     name="maSV"
+                    disabled={this.state.selected}
                     // onBlur={this.handleBlur}
                     value={maSV}
                     onChange={this.handleChange}

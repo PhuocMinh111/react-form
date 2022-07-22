@@ -4,70 +4,106 @@ export const validReducer = (
     errTenSV: { state: false, msg: "" },
     errEmail: { state: false, msg: "" },
     errSoDT: { state: false, msg: "" },
-    error: false,
   },
 
   { type, payload }
 ) => {
-  let temp = false;
-  let message = "";
   switch (type) {
-    case "CHECK_MASV":
+    case "VALIDATION":
       const { value, list } = payload;
+      console.log(value);
       const ma = value["maSV"];
-
-      if (ma.length === 0) {
-        temp = true;
-        message = "mã sinh viên không được bỏ trống";
-        return { ...state, errMaSV: { state: temp, msg: message } };
-      }
-      for (let i = 0; i < list.length; i++) {
-        if (list[i].maSV == ma) {
-          temp = true;
-          message = "mã sinh viên không được trùng";
+      if (payload.selected) {
+        if (ma.length === 0) {
+          state = {
+            ...state,
+            errMaSV: {
+              state: true,
+              msg: "mã sinh viên không được bỏ trống",
+            },
+          };
         }
-        return { ...state, errMaSV: { state: temp, msg: message } };
+        for (let i = 0; i < list.length; i++) {
+          if (list[i].maSV === ma) {
+            state = {
+              ...state,
+              errMaSV: {
+                state: true,
+                msg: "mã sinh viên không được trung",
+              },
+            };
+          }
+        }
       }
-
-      return { ...state, errTenSV: { state: temp, msg: message } };
-
-    case "CHECK_TEN":
       const ten = payload.value["tenSV"];
       if (ten.length < 1) {
-        message = "tên không dược bỏ trống";
-        temp = true;
+        state = {
+          ...state,
+          errTenSV: {
+            state: true,
+            msg: "tên không dược bỏ trống",
+          },
+        };
       } else if (ten.length > 16) {
-        message = "tên không dược dài hơn 16 ký tự";
-        temp = true;
+        state = {
+          ...state,
+          errTenSV: {
+            state: true,
+            msg: "tên không dược dài hơn 16 ký tự",
+          },
+        };
       }
-      return { ...state, errTenSV: { state: temp, msg: message } };
-    case "CHECK_DT":
       const dt = payload.value["soDT"];
       const numRegex = /[0-9]/;
       if (dt.length < 1) {
-        temp = true;
-        message = "số điện thoại không được bỏ trống";
-      } else if (!dt.match(numRegex)) {
-        temp = true;
-        message = "số diện thoại không được là chữ cái";
-      } else if (dt.length < 8 || dt.length > 16) {
-        temp = true;
-        message = "số diện thoại phải từ 8-16 số";
+        state = {
+          ...state,
+          errSoDT: {
+            state: true,
+            msg: "số điện thoại không được bỏ trống",
+          },
+        };
       }
-      return { ...state, errSoDT: { state: temp, msg: message } };
+      if (!dt.match(numRegex)) {
+        state = {
+          ...state,
+          errSoDT: {
+            state: true,
+            msg: "số diện thoại không được là chữ cái",
+          },
+        };
+      }
+      if (dt.length <= 6 || dt.length >= 16) {
+        state = {
+          ...state,
+          errSoDT: {
+            state: true,
+            msg: "số diện thoại phải từ 6-16 số",
+          },
+        };
+      }
 
-    case "CHECK_MAIL":
       const email = payload.value["email"];
       const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
       if (email.length < 1) {
-        temp = true;
-        message = "email không được bỏ trống";
+        state = {
+          ...state,
+          errEmail: {
+            state: true,
+            msg: "email không được bỏ trống",
+          },
+        };
       } else if (!email.match(emailRegex)) {
-        temp = true;
-        message = "email phải đúng dạng ";
+        state = {
+          ...state,
+          errEmail: {
+            state: true,
+            msg: "email phải đúng dạng ",
+          },
+        };
       }
-      return { ...state, errEmail: { state: temp, msg: message } };
-    default:
       return { ...state };
+    default:
+      return state;
   }
 };

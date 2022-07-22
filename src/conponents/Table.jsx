@@ -63,7 +63,17 @@ export class Table extends Component {
                       >
                         EDIT
                       </button>
-                      <button className="btn btn-danger">DELETE</button>
+                      <button
+                        onClick={() => {
+                          this.props.dispatch({
+                            type: "DEL",
+                            payload: user.maSV,
+                          });
+                        }}
+                        className="btn btn-danger"
+                      >
+                        DELETE
+                      </button>
                     </td>
                   </tr>
                 );
